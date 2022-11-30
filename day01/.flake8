@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 100
+ignore=
+    E1, W1, # indentation (pycodestyle)
+    E2, W2, # whitespace (pycodestyle)
+    E3, W3, # blank lines (pycodestyle)
+    E5, W5, # line length  (pycodestyle)
+    E7 # variable names (pycodestyle)
