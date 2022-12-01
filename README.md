@@ -1,2 +1,3 @@
-# AdventOfCode2022
-Repository to host Advent of Code 2022 Challenges
+# Advent Of Code 2022
+
+Code for my submissions to Advent of Code 2022
