@@ -2,6 +2,8 @@
 
 Python 3.11 + Poetry 
 
+Heavily relies on the excellent AOCD package created by @wimglenn: https://github.com/wimglenn/advent-of-code-data
+
 ---
 
 ### Prerequisites
