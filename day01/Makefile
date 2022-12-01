@@ -1,5 +1,3 @@
-PYTHON_VERSION=3.11
-
 .PHONY: setup-env
 setup-env:
 	poetry env use python3.11
