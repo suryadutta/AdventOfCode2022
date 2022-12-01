@@ -1,7 +1,7 @@
+from aocd import get_data
 import logging
 import sys
 
-# from aocd import get_data
 
 logger = logging.getLogger("advent_of_code_2022_day_1")
 logging.basicConfig(
@@ -13,16 +13,40 @@ logger.setLevel(logging.INFO)
 
 
 def run_part_a() -> str:
-    # data = get_data(day=1, year=2022)
+    data = get_data(day=1, year=2022).splitlines()
 
-    raise NotImplementedError
+    top_calorie_count = 0
+
+    calorie_count = 0
+    for line in data:
+        if line == "":
+            if calorie_count > top_calorie_count:
+                top_calorie_count = calorie_count
+            calorie_count = 0
+            continue
+        calorie_count += int(line)
+
+    return str(top_calorie_count)
 
 
 def run_part_b() -> str:
+    data = get_data(day=1, year=2022).splitlines()
 
-    # data = get_data(day=1, year=2022)
+    top_three_calorie_counts = [0, 0, 0]
 
-    raise NotImplementedError
+    calorie_count = 0
+
+    for line in data:
+        if line == "":
+            if calorie_count > top_three_calorie_counts[0]:
+                top_three_calorie_counts.pop(0)
+                top_three_calorie_counts.append(calorie_count)
+                top_three_calorie_counts.sort()
+            calorie_count = 0
+            continue
+        calorie_count += int(line)
+
+    return str(sum(top_three_calorie_counts))
 
 
 if __name__ == "__main__":
