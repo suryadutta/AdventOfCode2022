@@ -22,16 +22,30 @@ class CrateStack:
     def get_top_crate(self) -> str:
         return self.crates[-1]
 
-    def move_n_to_other_stack(self, num: int, other_stack: "CrateStack"):
-        for crate in self.remove_n(num):
-            other_stack.add(crate)
-
 
 @dataclass
 class MoveInstruction:
     num_crates_to_move: int
     from_stack_index: int
     to_stack_index: int
+
+
+class CrateMover:
+    def __init__(self, can_move_multiple_crates_at_once: bool):
+        self.can_move_multiple_crates_at_once = can_move_multiple_crates_at_once
+
+    def move_crates(self, from_stack: CrateStack, to_stack: CrateStack, num_to_move: int) -> None:
+
+        crates_removed = from_stack.remove_n(num_to_move)
+
+        if self.can_move_multiple_crates_at_once:
+            for crate in crates_removed:
+                to_stack.add(crate)
+
+        else:
+            # add in reverse order of removal
+            for crate in reversed(crates_removed):
+                to_stack.add(crate)
 
 
 def generate_stacks_from_crate_diagram(diagram: List[str]) -> Dict[int, "CrateStack"]:
@@ -72,16 +86,19 @@ def run_part_a() -> str:
 
     crates_diagram = raw_data[:split_index]
     instructions = raw_data[split_index + 1:]
+    mover = CrateMover(can_move_multiple_crates_at_once=False)
 
-    crates: Dict[int, CrateStack] = generate_stacks_from_crate_diagram(crates_diagram)
+    stacks: Dict[int, CrateStack] = generate_stacks_from_crate_diagram(crates_diagram)
     for step in instructions:
         instruction = parse_instruction_step(step)
-        crates[instruction.from_stack_index].move_n_to_other_stack(
-            num=instruction.num_crates_to_move,
-            other_stack=crates[instruction.to_stack_index],
+
+        mover.move_crates(
+            from_stack=stacks[instruction.from_stack_index],
+            to_stack=stacks[instruction.to_stack_index],
+            num_to_move=instruction.num_crates_to_move
         )
 
-    top_crates = [stack.get_top_crate() for stack in crates.values()]
+    top_crates = [stack.get_top_crate() for stack in stacks.values()]
 
     return "".join(top_crates)
 
