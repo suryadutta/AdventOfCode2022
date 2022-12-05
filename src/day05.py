@@ -104,5 +104,24 @@ def run_part_a() -> str:
 
 
 def run_part_b() -> str:
+    raw_data = get_data()
 
-    raise NotImplementedError
+    split_index = raw_data.index("")
+
+    crates_diagram = raw_data[:split_index]
+    instructions = raw_data[split_index + 1:]
+    mover = CrateMover(can_move_multiple_crates_at_once=True)
+
+    stacks: Dict[int, CrateStack] = generate_stacks_from_crate_diagram(crates_diagram)
+    for step in instructions:
+        instruction = parse_instruction_step(step)
+
+        mover.move_crates(
+            from_stack=stacks[instruction.from_stack_index],
+            to_stack=stacks[instruction.to_stack_index],
+            num_to_move=instruction.num_crates_to_move
+        )
+
+    top_crates = [stack.get_top_crate() for stack in stacks.values()]
+
+    return "".join(top_crates)

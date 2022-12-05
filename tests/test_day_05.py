@@ -1,4 +1,4 @@
-from src.day05 import CrateStack, MoveInstruction, generate_stacks_from_crate_diagram, parse_instruction_step
+from src.day05 import CrateStack, MoveInstruction, CrateMover, generate_stacks_from_crate_diagram, parse_instruction_step
 
 
 def test_cratestack():
@@ -17,7 +17,28 @@ def test_cratestack():
     assert stack.get_top_crate() == "c"
 
 
-def test_cratemover_single_crates():
+def test_cratemover_single_crate():
+    mover = CrateMover(can_move_multiple_crates_at_once=False)
+
+    from_stack = CrateStack(crates=["a", "b", "c"])
+    to_stack = CrateStack(crates=["d", "e", "f"])
+
+    mover.move_crates(from_stack=from_stack, to_stack=to_stack, num_to_move=2)
+
+    assert from_stack.crates == ["a"]
+    assert to_stack.crates == ["d", "e", "f", "c", "b"]
+
+
+def test_cratemover_multiple_crates():
+    mover = CrateMover(can_move_multiple_crates_at_once=True)
+
+    from_stack = CrateStack(crates=["a", "b", "c"])
+    to_stack = CrateStack(crates=["d", "e", "f"])
+
+    mover.move_crates(from_stack=from_stack, to_stack=to_stack, num_to_move=2)
+
+    assert from_stack.crates == ["a"]
+    assert to_stack.crates == ["d", "e", "f", "b", "c"]
 
 
 def test_generate_stacks_from_crate_diagram():
