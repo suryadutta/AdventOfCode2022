@@ -16,19 +16,21 @@ setup-env-dev:
 
 .PHONY: run
 run: setup-env check-day
-	poetry run python src/run.py
+	PYTHONPATH="$${PWD}" poetry run python src/run.py
 
 .PHONY: submit_part_a
 submit_part_a: setup-env check-day
-	poetry run python src/submit.py a
+	PYTHONPATH="$${PWD}" poetry run python src/submit.py a
 
 .PHONY: submit_part_b
 submit_part_b: setup-env set-year check-day
-	poetry run python src/submit.py b
+	PYTHONPATH="$${PWD}" poetry run python src/submit.py b
 
 .PHONY: test
 test: setup-env-dev
-	poetry run pytest tests/
+	PYTHONPATH="$${PWD}" poetry run python -m pytest \
+		--cov $${PWD}/src \
+		-v tests/
 
 .PHONY: format
 format: setup-env-dev

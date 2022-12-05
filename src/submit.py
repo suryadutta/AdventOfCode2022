@@ -20,7 +20,7 @@ logger.setLevel(logging.INFO)
 
 def submit_part_a():
 
-    answers_module = importlib.import_module(f"day{DAY:02d}.answers")
+    answers_module = importlib.import_module(f"src.day{DAY:02d}")
     run_part_a = getattr(answers_module, "run_part_a")
     submit(run_part_a(), part="a", day=DAY, year=YEAR)
     print("Part A submitted successfully")
@@ -28,7 +28,7 @@ def submit_part_a():
 
 def submit_part_b():
 
-    answers_module = importlib.import_module(f"day{DAY:02d}.answers")
+    answers_module = importlib.import_module(f"day{DAY:02d}")
     run_part_b = getattr(answers_module, "run_part_b")
     submit(run_part_b(), part="b", day=DAY, year=YEAR)
     print("Part B submitted successfully")

@@ -1,4 +1,4 @@
-from utils import get_data
+from src.utils import get_data
 
 selection_bonuses = {"rock": 1, "paper": 2, "scissors": 3}
 beat = {"rock": "paper", "paper": "scissors", "scissors": "rock"}

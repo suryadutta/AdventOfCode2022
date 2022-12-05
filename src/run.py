@@ -17,7 +17,7 @@ logger.setLevel(logging.INFO)
 
 def run_code():
 
-    answers_module = importlib.import_module(f"day{DAY:02d}.answers")
+    answers_module = importlib.import_module(f"src.day{DAY:02d}")
 
     run_part_a = getattr(answers_module, "run_part_a")
     try:
