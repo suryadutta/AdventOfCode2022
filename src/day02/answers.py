@@ -1,14 +1,4 @@
-from aocd import get_data
-import logging
-import sys
-
-logger = logging.getLogger("advent_of_code_2022_day_2")
-logging.basicConfig(
-    format="%(levelname)s [%(asctime)s] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    stream=sys.stdout,
-)
-logger.setLevel(logging.INFO)
+from utils import get_data
 
 selection_bonuses = {"rock": 1, "paper": 2, "scissors": 3}
 beat = {"rock": "paper", "paper": "scissors", "scissors": "rock"}
@@ -24,7 +14,7 @@ def result(a, b):
 
 
 def run_part_a() -> str:
-    data = get_data(day=2, year=2022).splitlines()
+    data = get_data()
 
     mapping = {
         "A": "rock",
@@ -48,7 +38,7 @@ def run_part_a() -> str:
 
 
 def run_part_b() -> str:
-    data = get_data(day=2, year=2022).splitlines()
+    data = get_data()
 
     opp_mapping = {"A": "rock", "B": "paper", "C": "scissors"}
     needed_result = {"X": "lose", "Y": "draw", "Z": "win"}
@@ -69,16 +59,3 @@ def run_part_b() -> str:
         score += scoring[round_result] + selection_bonuses[my_choice]
 
     return str(score)
-
-
-if __name__ == "__main__":
-
-    try:
-        logger.info(f"Part A Answer: {run_part_a()}")
-    except NotImplementedError:
-        logger.error("Part A not started yet")
-
-    try:
-        logger.info(f"Part B Answer: {run_part_b()}")
-    except NotImplementedError:
-        logger.error("Part B not started yet")
