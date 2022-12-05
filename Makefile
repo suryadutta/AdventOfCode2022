@@ -1,3 +1,15 @@
+AOC_YEAR = 2022
+
+PHONY: set-year
+set-year:
+	export AOC_YEAR=${AOC_YEAR}
+
+PHONY: check-day
+check-day:
+ifndef AOC_DAY
+	$(error AOC_DAY must be set)
+endif
+
 .PHONY: setup-env
 setup-env:
 	poetry env use python3.11
@@ -5,19 +17,24 @@ setup-env:
 
 .PHONY: setup-env-dev
 setup-env-dev:
+	poetry env use python3.11
 	poetry install --with dev
 
 .PHONY: run
-run: setup-env
-	poetry run python src/main.py
+run: setup-env set-year check-day
+	poetry run python src/run.py
 
 .PHONY: submit_part_a
-submit_part_a: setup-env
+submit_part_a: setup-env set-year check-day
 	poetry run python src/submit.py a
 
 .PHONY: submit_part_b
-submit_part_b: setup-env
+submit_part_b: setup-env set-year check-day
 	poetry run python src/submit.py b
+
+.PHONY: test
+test: setup-env-dev
+	poetry run pytest tests/
 
 .PHONY: format
 format: setup-env-dev
