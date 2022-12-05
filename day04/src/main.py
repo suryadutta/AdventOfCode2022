@@ -4,7 +4,7 @@ import logging
 import sys
 from typing import Tuple
 
-logger = logging.getLogger("advent_of_code_2022_day_3")
+logger = logging.getLogger("advent_of_code_2022_day_4")
 logging.basicConfig(
     format="%(levelname)s [%(asctime)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
