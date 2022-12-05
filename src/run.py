@@ -4,6 +4,7 @@ import os
 import sys
 
 DAY = int(os.environ["AOC_DAY"])
+YEAR = 2022
 
 logger = logging.getLogger(f"advent_of_code_2022_day_{DAY}")
 logging.basicConfig(

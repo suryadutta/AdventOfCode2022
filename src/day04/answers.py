@@ -1,18 +1,9 @@
-from aocd import get_data
 from dataclasses import dataclass
-import logging
-import sys
 from typing import Tuple
+from utils import get_data
 
-logger = logging.getLogger("advent_of_code_2022_day_4")
-logging.basicConfig(
-    format="%(levelname)s [%(asctime)s] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    stream=sys.stdout,
-)
-logger.setLevel(logging.INFO)
 
-DATA = get_data(day=4, year=2022).splitlines()
+DATA = get_data()
 
 
 @dataclass
@@ -70,16 +61,3 @@ def run_part_b() -> str:
             overlapping_assignments += 1
 
     return str(overlapping_assignments)
-
-
-if __name__ == "__main__":
-
-    try:
-        logger.info(f"Part A Answer: {run_part_a()}")
-    except NotImplementedError:
-        logger.error("Part A not started yet")
-
-    try:
-        logger.info(f"Part B Answer: {run_part_b()}")
-    except NotImplementedError:
-        logger.error("Part B not started yet")

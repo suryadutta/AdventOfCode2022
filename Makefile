@@ -1,9 +1,3 @@
-AOC_YEAR = 2022
-
-PHONY: set-year
-set-year:
-	export AOC_YEAR=${AOC_YEAR}
-
 PHONY: check-day
 check-day:
 ifndef AOC_DAY
@@ -21,11 +15,11 @@ setup-env-dev:
 	poetry install --with dev
 
 .PHONY: run
-run: setup-env set-year check-day
+run: setup-env check-day
 	poetry run python src/run.py
 
 .PHONY: submit_part_a
-submit_part_a: setup-env set-year check-day
+submit_part_a: setup-env check-day
 	poetry run python src/submit.py a
 
 .PHONY: submit_part_b

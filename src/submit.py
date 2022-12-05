@@ -7,6 +7,7 @@ from aocd import submit
 
 
 DAY = int(os.environ["AOC_DAY"])
+YEAR = 2022
 
 logger = logging.getLogger(f"advent_of_code_2022_day_{DAY}")
 logging.basicConfig(
@@ -19,8 +20,6 @@ logger.setLevel(logging.INFO)
 
 def submit_part_a():
 
-    year = int(os.environ["AOC_YEAR"])
-
     answers_module = importlib.import_module(f"day{DAY:02d}.answers")
     run_part_a = getattr(answers_module, "run_part_a")
     submit(run_part_a(), part="a", day=DAY, year=YEAR)
@@ -28,8 +27,6 @@ def submit_part_a():
 
 
 def submit_part_b():
-
-    year = int(os.environ["AOC_YEAR"])
 
     answers_module = importlib.import_module(f"day{DAY:02d}.answers")
     run_part_b = getattr(answers_module, "run_part_b")
