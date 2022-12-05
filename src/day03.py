@@ -20,7 +20,9 @@ def split_equal_string(input: str) -> Tuple[str, str]:
 def find_common_letter(inputs: List[str]) -> str:
     assert len(inputs) > 1, "Must have more than 1 input"
 
-    common_letters = list(set(inputs[0]).intersection(*map(list, inputs[1:])))
+    common_letters = list(
+        set(inputs[0]).intersection(*map(lambda x: list(x), inputs[1:]))
+    )
 
     assert (
         len(common_letters) == 1

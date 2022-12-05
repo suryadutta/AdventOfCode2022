@@ -1,4 +1,9 @@
-from src.day05 import CrateStack, MoveInstruction, CrateMover, generate_stacks_from_crate_diagram, parse_instruction_step
+from src.day05 import (
+    CrateStack,
+    CrateMover,
+    generate_stacks_from_crate_diagram,
+    parse_instruction_step,
+)
 
 
 def test_cratestack():
@@ -43,12 +48,7 @@ def test_cratemover_multiple_crates():
 
 def test_generate_stacks_from_crate_diagram():
 
-    test_diagram = [
-        "    [D]    ",
-        "[N] [C]    ",
-        "[Z] [M] [P]",
-        " 1   2   3 "
-    ]
+    test_diagram = ["    [D]    ", "[N] [C]    ", "[Z] [M] [P]", " 1   2   3 "]
 
     stacks = generate_stacks_from_crate_diagram(test_diagram)
 

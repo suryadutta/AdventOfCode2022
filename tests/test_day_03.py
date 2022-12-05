@@ -1,4 +1,4 @@
-from src.day03 import split_equal_string, find_common_letter
+from src.day03 import split_equal_string
 
 
 def test_split_equal_string():

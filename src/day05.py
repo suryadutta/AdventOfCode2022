@@ -34,7 +34,9 @@ class CrateMover:
     def __init__(self, can_move_multiple_crates_at_once: bool):
         self.can_move_multiple_crates_at_once = can_move_multiple_crates_at_once
 
-    def move_crates(self, from_stack: CrateStack, to_stack: CrateStack, num_to_move: int) -> None:
+    def move_crates(
+        self, from_stack: CrateStack, to_stack: CrateStack, num_to_move: int
+    ) -> None:
 
         crates_removed = from_stack.remove_n(num_to_move)
 
@@ -56,7 +58,7 @@ def generate_stacks_from_crate_diagram(diagram: List[str]) -> Dict[int, "CrateSt
     num_stacks = int(max(set(diagram[0])))
     indices = range(1, num_stacks + 1)
 
-    stacks: Dict["CrateStack"] = {i: CrateStack() for i in indices}
+    stacks: Dict[int, CrateStack] = {i: CrateStack() for i in indices}
 
     for row in diagram[1:]:
         for i in indices:
@@ -71,6 +73,9 @@ def parse_instruction_step(step: str) -> MoveInstruction:
     result = re.search(
         r"move\s(?P<num>\d+)\sfrom\s(?P<from_crate>\d+)\sto\s(?P<to_crate>\d+)", step
     )
+
+    assert result is not None
+
     return MoveInstruction(
         num_crates_to_move=int(result.group("num")),
         from_stack_index=int(result.group("from_crate")),
@@ -85,7 +90,7 @@ def run_part_a() -> str:
     split_index = raw_data.index("")
 
     crates_diagram = raw_data[:split_index]
-    instructions = raw_data[split_index + 1:]
+    instructions = raw_data[split_index + 1 :]
     mover = CrateMover(can_move_multiple_crates_at_once=False)
 
     stacks: Dict[int, CrateStack] = generate_stacks_from_crate_diagram(crates_diagram)
@@ -95,7 +100,7 @@ def run_part_a() -> str:
         mover.move_crates(
             from_stack=stacks[instruction.from_stack_index],
             to_stack=stacks[instruction.to_stack_index],
-            num_to_move=instruction.num_crates_to_move
+            num_to_move=instruction.num_crates_to_move,
         )
 
     top_crates = [stack.get_top_crate() for stack in stacks.values()]
@@ -109,7 +114,7 @@ def run_part_b() -> str:
     split_index = raw_data.index("")
 
     crates_diagram = raw_data[:split_index]
-    instructions = raw_data[split_index + 1:]
+    instructions = raw_data[split_index + 1 :]
     mover = CrateMover(can_move_multiple_crates_at_once=True)
 
     stacks: Dict[int, CrateStack] = generate_stacks_from_crate_diagram(crates_diagram)
@@ -119,7 +124,7 @@ def run_part_b() -> str:
         mover.move_crates(
             from_stack=stacks[instruction.from_stack_index],
             to_stack=stacks[instruction.to_stack_index],
-            num_to_move=instruction.num_crates_to_move
+            num_to_move=instruction.num_crates_to_move,
         )
 
     top_crates = [stack.get_top_crate() for stack in stacks.values()]
