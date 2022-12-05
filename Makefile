@@ -23,7 +23,7 @@ submit_part_a: setup-env check-day
 	PYTHONPATH="$${PWD}" poetry run python src/submit.py a
 
 .PHONY: submit_part_b
-submit_part_b: setup-env set-year check-day
+submit_part_b: setup-env check-day
 	PYTHONPATH="$${PWD}" poetry run python src/submit.py b
 
 .PHONY: test
