@@ -4,7 +4,7 @@ from src.utils import get_data
 def get_first_marker(input: str, num_distinct: int) -> int:
     start_of_packet_index = None
     for i in range(len(input)):
-        window = input[i:i+num_distinct]
+        window = input[i : i + num_distinct]
         if len(set(window)) == num_distinct:
             start_of_packet_index = i + num_distinct
             break
