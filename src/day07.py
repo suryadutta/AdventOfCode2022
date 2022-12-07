@@ -7,33 +7,17 @@ from typing import Iterator, List, Optional
 class File:
     name: str
     size: int
-    parent: Optional["Directory"] = field(default=None)
-
-    def __eq__(self, other):
-        if not isinstance(other, File):
-            # don't attempt to compare against unrelated types
-            return NotImplemented
-
-        return self.name == other.name and self.size == other.size
+    parent: Optional["Directory"] = field(default=None, init=False, compare=False)
 
 
 @dataclass
 class Directory:
     name: str
-    parent_directory: Optional["Directory"] = field(default=None)
     files: List[File] = field(default_factory=list)
     subdirectories: List["Directory"] = field(default_factory=list)
-
-    def __eq__(self, other):
-        if not isinstance(other, Directory):
-            # don't attempt to compare against unrelated types
-            return NotImplemented
-
-        return (
-            self.name == other.name
-            and self.files == other.files
-            and self.subdirectories == other.subdirectories
-        )
+    parent_directory: Optional["Directory"] = field(
+        default=None, init=False, compare=False
+    )
 
     def add_file(self, file: File):
 
@@ -55,12 +39,6 @@ class Directory:
         subdirectory.parent_directory = self
         self.subdirectories.append(subdirectory)
 
-    def try_get_file(self, filename: str) -> Optional[File]:
-        for file in self.files:
-            if file.name == filename:
-                return file
-        return None
-
     def try_get_subdirectory(self, subdirectory_name: str) -> Optional["Directory"]:
         for subdirectory in self.subdirectories:
             if subdirectory.name == subdirectory_name:
@@ -79,9 +57,6 @@ class Directory:
             yield subdirectory
             for subsubdirectory in subdirectory.yield_all_subdirectories():
                 yield subsubdirectory
-
-    def is_leaf(self):
-        return len(self.files) == 0 and len(self.subdirectories) == 0
 
 
 def nested_set(dic, keys, value):
@@ -113,9 +88,7 @@ class FileManager:
             self.current_location = new_subdirectory
 
     def add_file(self, filename: str, filesize: int):
-        self.current_location.add_file(
-            File(name=filename, size=filesize, parent=self.current_location)
-        )
+        self.current_location.add_file(File(name=filename, size=filesize))
 
     def add_folder(self, dirname: str):
         self.current_location.add_subdirectory(Directory(name=dirname))
