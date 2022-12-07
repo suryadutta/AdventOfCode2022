@@ -30,7 +30,8 @@ submit_part_b: setup-env check-day
 test: setup-env-dev
 	PYTHONPATH="$${PWD}" poetry run python -m pytest \
 		--cov $${PWD}/src \
-		-v tests/
+		-v tests/ \
+		-vv
 
 .PHONY: format
 format: setup-env-dev
