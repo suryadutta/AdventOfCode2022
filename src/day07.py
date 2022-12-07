@@ -31,7 +31,7 @@ class Directory:
 
     def add_subdirectory(self, subdirectory: "Directory"):
 
-        if subdirectory.name in self.files:
+        if subdirectory.name in self.subdirectories:
             raise RuntimeError(
                 f"Subdirectory {subdirectory.name} already exists in directory {self.name}"
             )
