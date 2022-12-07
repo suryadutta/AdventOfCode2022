@@ -25,7 +25,10 @@ def test_file_manager():
         }
     }
 
-    assert manager.get_sum_of_directory_size_less_than_threshold(threshold=100000) == (12345 + 23456) * 3
+    assert (
+        manager.get_sum_of_directory_size_less_than_threshold(threshold=100000)
+        == (12345 + 23456) * 3
+    )
 
     manager.cd("..")
     manager.add_folder("level_2c")
@@ -81,4 +84,16 @@ def test_process_commands():
         }
     }
 
-    assert test_file_manager.get_sum_of_directory_size_less_than_threshold(threshold=100000) == 95437
+    assert (
+        test_file_manager.get_sum_of_directory_size_less_than_threshold(
+            threshold=100000
+        )
+        == 95437
+    )
+
+    assert (
+        test_file_manager.get_size_of_smallest_sufficient_directory_to_delete(
+            total_disk_space=70000000, required_space=30000000
+        )
+        == 24933642
+    )

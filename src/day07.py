@@ -10,7 +10,7 @@ def nested_set(dic, keys, value):
 
 class FileManager:
 
-    filetree: {}
+    filetree: dict
     current_location: List
 
     def __init__(self):
@@ -33,8 +33,9 @@ class FileManager:
     def add_folder(self, dirname: str):
         nested_set(dic=self.filetree, keys=self.current_location + [dirname], value={})
 
-    def get_sum_of_directory_size_less_than_threshold(self, threshold: int):
-        running_sum = 0
+    def get_directory_sizes(self):
+
+        directory_sizes = {}
 
         def _get_nodes(tree):
             for key, value in tree.items():
@@ -66,10 +67,32 @@ class FileManager:
         for node in all_nodes:
             if isinstance(node[1], dict):
                 dirsize = _get_total_filesize_from_dict(node[1])
-                if dirsize <= threshold:
-                    running_sum += dirsize
+                directory_sizes[node[0]] = dirsize
 
-        return running_sum
+        return directory_sizes
+
+    def get_sum_of_directory_size_less_than_threshold(self, threshold: int) -> int:
+        return sum(
+            dirsize
+            for dirsize in self.get_directory_sizes().values()
+            if dirsize < threshold
+        )
+
+    def get_size_of_smallest_sufficient_directory_to_delete(
+        self, total_disk_space: int, required_space: int
+    ) -> int:
+        directory_sizes = self.get_directory_sizes()
+        total_used_space = directory_sizes["/"]
+
+        total_free_space = total_disk_space - total_used_space
+        total_needed_space = required_space - total_free_space
+
+        smallest_dir_size = total_used_space
+        for dir, dirsize in directory_sizes.items():
+            if dirsize > total_needed_space and dirsize < smallest_dir_size:
+                smallest_dir_size = dirsize
+
+        return smallest_dir_size
 
 
 def process_commands(
@@ -115,15 +138,21 @@ def process_commands(
 
 def run_part_a() -> str:
     data = get_data()
-    data.pop(0)
-
     file_manager = FileManager()
-
     process_commands(commands=data, file_manager=file_manager)
 
-    return str(file_manager.get_sum_of_directory_size_less_than_threshold(threshold=100000))
+    return str(
+        file_manager.get_sum_of_directory_size_less_than_threshold(threshold=100000)
+    )
 
 
 def run_part_b() -> str:
     data = get_data()
-    raise NotImplementedError
+    file_manager = FileManager()
+    process_commands(commands=data, file_manager=file_manager)
+
+    return str(
+        file_manager.get_size_of_smallest_sufficient_directory_to_delete(
+            total_disk_space=70000000, required_space=30000000
+        )
+    )
