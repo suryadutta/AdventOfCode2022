@@ -1,5 +1,87 @@
+from dataclasses import dataclass, field
 from src.utils import get_data
-from typing import List
+from typing import Iterator, List, Optional
+
+
+@dataclass
+class File:
+    name: str
+    size: int
+    parent: Optional["Directory"] = field(default=None)
+
+    def __eq__(self, other):
+        if not isinstance(other, File):
+            # don't attempt to compare against unrelated types
+            return NotImplemented
+
+        return self.name == other.name and self.size == other.size
+
+
+@dataclass
+class Directory:
+    name: str
+    parent_directory: Optional["Directory"] = field(default=None)
+    files: List[File] = field(default_factory=list)
+    subdirectories: List["Directory"] = field(default_factory=list)
+
+    def __eq__(self, other):
+        if not isinstance(other, Directory):
+            # don't attempt to compare against unrelated types
+            return NotImplemented
+
+        return (
+            self.name == other.name
+            and self.files == other.files
+            and self.subdirectories == other.subdirectories
+        )
+
+    def add_file(self, file: File):
+
+        if file.name in self.files:
+            raise RuntimeError(
+                f"File {file.name} already exists in directory {self.name}"
+            )
+
+        file.parent = self
+        self.files.append(file)
+
+    def add_subdirectory(self, subdirectory: "Directory"):
+
+        if subdirectory.name in self.files:
+            raise RuntimeError(
+                f"Subdirectory {subdirectory.name} already exists in directory {self.name}"
+            )
+
+        subdirectory.parent_directory = self
+        self.subdirectories.append(subdirectory)
+
+    def try_get_file(self, filename: str) -> Optional[File]:
+        for file in self.files:
+            if file.name == filename:
+                return file
+        return None
+
+    def try_get_subdirectory(self, subdirectory_name: str) -> Optional["Directory"]:
+        for subdirectory in self.subdirectories:
+            if subdirectory.name == subdirectory_name:
+                return subdirectory
+        return None
+
+    def get_total_dir_size(self):
+        total_file_size = sum(file.size for file in self.files)
+        total_subdirectory_size = sum(
+            subdirectory.get_total_dir_size() for subdirectory in self.subdirectories
+        )
+        return total_file_size + total_subdirectory_size
+
+    def yield_all_subdirectories(self) -> Iterator["Directory"]:
+        for subdirectory in self.subdirectories:
+            yield subdirectory
+            for subsubdirectory in subdirectory.yield_all_subdirectories():
+                yield subsubdirectory
+
+    def is_leaf(self):
+        return len(self.files) == 0 and len(self.subdirectories) == 0
 
 
 def nested_set(dic, keys, value):
@@ -10,87 +92,61 @@ def nested_set(dic, keys, value):
 
 class FileManager:
 
-    filetree: dict
-    current_location: List
+    root_directory: Directory
+    current_location: Directory
 
     def __init__(self):
-        self.filetree = {}
-        self.current_location = ["/"]
+        self.root_directory = Directory("/")
+        self.current_location = self.root_directory
 
     def cd(self, dirname: str):
         if dirname == "/":
-            self.current_location = ["/"]
+            self.current_location = self.root_directory
         elif dirname == "..":
-            self.current_location.pop(-1)
+            if self.current_location.parent_directory is not None:
+                self.current_location = self.current_location.parent_directory
         else:
-            self.current_location.append(dirname)
+            new_subdirectory = self.current_location.try_get_subdirectory(dirname)
+            if new_subdirectory is None:
+                new_subdirectory = Directory(name=dirname)
+                self.current_location.add_subdirectory(new_subdirectory)
+            self.current_location = new_subdirectory
 
     def add_file(self, filename: str, filesize: int):
-        nested_set(
-            dic=self.filetree, keys=self.current_location + [filename], value=filesize
+        self.current_location.add_file(
+            File(name=filename, size=filesize, parent=self.current_location)
         )
 
     def add_folder(self, dirname: str):
-        nested_set(dic=self.filetree, keys=self.current_location + [dirname], value={})
-
-    def get_directory_sizes(self):
-
-        directory_sizes = {}
-
-        def _get_nodes(tree):
-            for key, value in tree.items():
-                yield (key, value)
-                if isinstance(value, dict):
-                    yield from _get_nodes(value)
-
-        def _get_total_filesize_from_dict(dict_to_evaluate: dict):
-            def _paths(tree, cur=()):
-                if not tree or not isinstance(tree, dict):
-                    yield cur
-                else:
-                    for n, s in tree.items():
-                        for path in _paths(s, cur + (n,)):
-                            yield path
-
-            total_filesize: int = 0
-
-            for path in _paths(dict_to_evaluate):
-                locator = dict_to_evaluate.copy()
-                for path_segment in path:
-                    locator = locator[path_segment]
-                if isinstance(locator, int):
-                    total_filesize += locator
-
-            return total_filesize
-
-        all_nodes = _get_nodes(self.filetree)
-        for node in all_nodes:
-            if isinstance(node[1], dict):
-                dirsize = _get_total_filesize_from_dict(node[1])
-                directory_sizes[node[0]] = dirsize
-
-        return directory_sizes
+        self.current_location.add_subdirectory(Directory(name=dirname))
 
     def get_sum_of_directory_size_less_than_threshold(self, threshold: int) -> int:
-        return sum(
-            dirsize
-            for dirsize in self.get_directory_sizes().values()
-            if dirsize < threshold
-        )
+
+        running_sum = 0
+
+        if self.root_directory.get_total_dir_size() <= threshold:
+            running_sum += self.root_directory.get_total_dir_size()
+
+        for subdir in self.root_directory.yield_all_subdirectories():
+            total_size = subdir.get_total_dir_size()
+            if total_size <= threshold:
+                running_sum += total_size
+
+        return running_sum
 
     def get_size_of_smallest_sufficient_directory_to_delete(
         self, total_disk_space: int, required_space: int
     ) -> int:
-        directory_sizes = self.get_directory_sizes()
-        total_used_space = directory_sizes["/"]
 
+        total_used_space = self.root_directory.get_total_dir_size()
         total_free_space = total_disk_space - total_used_space
         total_needed_space = required_space - total_free_space
 
         smallest_dir_size = total_used_space
-        for dir, dirsize in directory_sizes.items():
-            if dirsize > total_needed_space and dirsize < smallest_dir_size:
-                smallest_dir_size = dirsize
+        for subdir in self.root_directory.yield_all_subdirectories():
+            total_size = subdir.get_total_dir_size()
+            if total_needed_space < total_size < smallest_dir_size:
+                smallest_dir_size = total_size
 
         return smallest_dir_size
 
@@ -111,7 +167,6 @@ def process_commands(
             elif command_parts[1] == "ls":
 
                 i += 1
-
                 listed_split_entries = []
 
                 # aggregate all entries listed
