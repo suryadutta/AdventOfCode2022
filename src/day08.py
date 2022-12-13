@@ -1,5 +1,6 @@
 from src.utils import get_data
 import numpy as np
+import numpy.typing as npt
 from typing import List
 
 
@@ -7,13 +8,12 @@ def parse_matrix(data: List[str]):
     return np.array([list(line) for line in data]).astype(int)
 
 
-def get_visible_trees(matrix: np.typing.NDArray):
+def get_visible_trees(matrix: npt.NDArray):
 
     visible_tree_indices = set()
-
     n_rows, n_columns = np.shape(matrix)
 
-    def _get_visible_tree_coords(arr: np.typing.NDArray):
+    def _get_visible_tree_coords(arr: npt.NDArray):
         visible_indices = []
         max_height_found = -1
         for i in range(arr.shape[0]):
@@ -54,7 +54,7 @@ def get_visible_trees(matrix: np.typing.NDArray):
     return visible_tree_indices
 
 
-def get_directional_scenic_score(tree_height: int, view: np.typing.NDArray):
+def get_directional_scenic_score(tree_height: int, view: npt.NDArray):
     score = np.argwhere(view >= tree_height)
     if len(score) == 0:
         return len(view)
@@ -62,7 +62,7 @@ def get_directional_scenic_score(tree_height: int, view: np.typing.NDArray):
 
 
 def get_scenic_score_for_tree(
-    matrix: np.typing.NDArray, row_index: int, col_index: int
+    matrix: npt.NDArray, row_index: int, col_index: int
 ) -> int:
     n_rows, n_columns = np.shape(matrix)
     tree_height = matrix[row_index, col_index]
@@ -105,7 +105,7 @@ def get_scenic_score_for_tree(
     return int(total_scenic_score)
 
 
-def get_max_scenic_score_for_tree(matrix: np.typing.NDArray) -> int:
+def get_max_scenic_score_for_tree(matrix: npt.NDArray) -> int:
 
     max_scenic_score = 0
     n_rows, n_columns = np.shape(matrix)

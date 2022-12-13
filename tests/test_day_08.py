@@ -1,5 +1,5 @@
-import numpy as np
 from src.day08 import (
+    np,
     get_visible_trees,
     get_directional_scenic_score,
     get_scenic_score_for_tree,
